@@ -22,6 +22,8 @@ class Scalpel
     text.gsub!('...', '&;&.')
     # Remove floating point numbers.
     text.gsub!(/([0-9]+)\.([0-9]+)/) { $1 + '&@&' + $2 }
+    # Handle floats without leading zero.
+    text.gsub!(/\s\.([0-9]+)/) { ' &#&' + $1 }
     # Remove abbreviations.
     text.gsub!(/(?:[A-Za-z]\.){2,}/) { |abbr| abbr.gsub('.', '&-&') }
     # Remove titles.
@@ -63,7 +65,9 @@ class Scalpel
       sentence.gsub!(/&%&([.!?])/) { $1 + "'" }
       sentence.gsub!(/&\^&([.?!])/) { "'" + $1 + '"' }
       sentence.gsub!(/&\*&([.?!])/) { "'" + $1 + '”' }
-      sentence.gsub!(/&$&([.!?])/) { $1 + '"' }
+      sentence.gsub!(/&\$&([.!?])/) { $1 + '"' }
+      # Repair floats without leading zeros.
+      sentence.gsub!(/&#&([0-9]+)/) { '.' + $1 }
       results << sentence.strip
     end
 
