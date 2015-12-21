@@ -8,7 +8,7 @@
 class Scalpel
 
   # Current version.
-  VERSION = '0.2.1'
+  VERSION = '0.2.2'
 
   # Segment a text using the Scalpel algorithm.
   # This will eventually be ported to a gem.
