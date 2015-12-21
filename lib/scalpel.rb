@@ -26,6 +26,8 @@ class Scalpel
     text.gsub!(/\s\.([0-9]+)/) { ' &#&' + $1 }
     # Remove abbreviations.
     text.gsub!(/(?:[A-Za-z]\.){2,}/) { |abbr| abbr.gsub('.', '&-&') }
+    # Remove initials.
+    text.gsub!(/(?:[A-Z]\.)/) {|abbr| abbr.gsub('.', '&£&') }
     # Remove titles.
     text.gsub!(/[A-Z][a-z]{1,2}\./) { |title| title.gsub('.', '&*&') }
     # Unstick sentences from each other.
@@ -53,6 +55,8 @@ class Scalpel
       next if sentence.strip == ''
       # Repair composite abbreviations.
       sentence.gsub!('&&&', 'et al.')
+      # Repair initials.
+      sentence.gsub!("&£&", ".")
       # Repair abbreviations.
       sentence.gsub!('&-&', '.')
       # Repair titles.
