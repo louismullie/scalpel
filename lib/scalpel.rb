@@ -37,6 +37,8 @@ class Scalpel
     text.gsub!(/([.?!])\s?'"/) { '&,&' + $1 }
     text.gsub!(/([.?!])\s?'/) { '&%&' + $1 }
     text.gsub!(/([.?!])\s?"/) { '&$&' + $1 }
+    # Remove sentence enders before parens.
+    text.gsub!(/([.?!])\s?\)/) { '&€&' + $1 }
     # Split on any sentence ender.
     sentences = text.split(/([.!?])/)
     new_sents = []
@@ -66,6 +68,8 @@ class Scalpel
       sentence.gsub!(/&\^&([.?!])/) { "'" + $1 + '"' }
       sentence.gsub!(/&\*&([.?!])/) { "'" + $1 + '”' }
       sentence.gsub!(/&\$&([.!?])/) { $1 + '"' }
+      # Repair parens with sentence enders
+      sentence.gsub!(/&€&([.!?])/) { $1 + ')' }
       # Repair floats without leading zeros.
       sentence.gsub!(/&#&([0-9]+)/) { '.' + $1 }
       results << sentence.strip
