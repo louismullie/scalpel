@@ -8,7 +8,7 @@
 class Scalpel
 
   # Current version.
-  VERSION = '0.2.1'
+  VERSION = '0.2.2'
 
   # Segment a text using the Scalpel algorithm.
   # This will eventually be ported to a gem.
@@ -26,6 +26,8 @@ class Scalpel
     text.gsub!(/\s\.([0-9]+)/) { ' &#&' + $1 }
     # Remove abbreviations.
     text.gsub!(/(?:[A-Za-z]\.){2,}/) { |abbr| abbr.gsub('.', '&-&') }
+    # Remove initials.
+    text.gsub!(/(?:[A-Z]\.)/) {|abbr| abbr.gsub('.', '&£&') }
     # Remove titles.
     text.gsub!(/[A-Z][a-z]{1,2}\./) { |title| title.gsub('.', '&*&') }
     # Unstick sentences from each other.
@@ -37,6 +39,8 @@ class Scalpel
     text.gsub!(/([.?!])\s?'"/) { '&,&' + $1 }
     text.gsub!(/([.?!])\s?'/) { '&%&' + $1 }
     text.gsub!(/([.?!])\s?"/) { '&$&' + $1 }
+    # Remove sentence enders before parens.
+    text.gsub!(/([.?!])\s?\)/) { '&€&' + $1 }
     # Split on any sentence ender.
     sentences = text.split(/([.!?])/)
     new_sents = []
@@ -51,6 +55,8 @@ class Scalpel
       next if sentence.strip == ''
       # Repair composite abbreviations.
       sentence.gsub!('&&&', 'et al.')
+      # Repair initials.
+      sentence.gsub!("&£&", ".")
       # Repair abbreviations.
       sentence.gsub!('&-&', '.')
       # Repair titles.
@@ -66,6 +72,8 @@ class Scalpel
       sentence.gsub!(/&\^&([.?!])/) { "'" + $1 + '"' }
       sentence.gsub!(/&\*&([.?!])/) { "'" + $1 + '”' }
       sentence.gsub!(/&\$&([.!?])/) { $1 + '"' }
+      # Repair parens with sentence enders
+      sentence.gsub!(/&€&([.!?])/) { $1 + ')' }
       # Repair floats without leading zeros.
       sentence.gsub!(/&#&([0-9]+)/) { '.' + $1 }
       results << sentence.strip
